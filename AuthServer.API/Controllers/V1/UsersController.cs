@@ -13,11 +13,9 @@ namespace AuthServer.API.Controllers.V1
     [Route("api/v{version:apiVersion}/[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly ILogger<UsersController> _logger;
         private IUserServices _userServices;
-        public UsersController(ILogger<UsersController> logger, IUserServices userServices)
+        public UsersController( IUserServices userServices)
         {
-            _logger = logger;
             _userServices = userServices;
         }
 
