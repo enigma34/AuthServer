@@ -21,10 +21,6 @@ namespace AuthServer.API.Services
             testUsers.Add(new User() { Id = 3, Email = "wsad@xyz.com", PasswordHash = "$2a$11$BDW8s0ctkCo35NqKfdXmG.aSME0Tqne6wepyeVYctpkeft2KStluC", USerRole = new() { Roles.User.ToString() } });
             _configuration = configuration;
         }
-        //public UserServices()
-        //{
-            
-        //}
 
         public List<User> GetAllUsers()
          {

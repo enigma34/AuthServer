@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using AuthServer.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
@@ -22,7 +23,7 @@ namespace AuthServer.API.Controllers.V1
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
+        [HttpGet(Name = "GetWeatherForecast"), Authorize(Roles = "Admin, User")]
         public IActionResult Get()
         {
             try

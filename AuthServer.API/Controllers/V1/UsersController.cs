@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using AuthServer.API.Models;
 using AuthServer.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ namespace AuthServer.API.Controllers.V1
             _userServices = userServices;
         }
 
-        [HttpGet(Name = "GetListOfUsers")]
+        [HttpGet(Name = "GetListOfUsers"),Authorize(Roles = "Admin")]
         public IActionResult GetAll()
         {
             try
