@@ -84,29 +84,63 @@ namespace AuthServer.API.Services
         }
 
         public string CreateToken(User user)
-        {          
-            List<Claim> claims = new List<Claim> {
+        {
+            try
+            {
+                List<Claim> claims = new List<Claim> {
                 new Claim(ClaimTypes.Email, user.Email)
             };
-            foreach (var role in user.USerRole)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                foreach (var role in user.USerRole)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                    _configuration.GetSection("AppSettings:Token").Value!));
+
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+
+                var token = new JwtSecurityToken(
+                        claims: claims,
+                        expires: DateTime.Now.AddMinutes(1),
+                        signingCredentials: creds
+                    );
+
+                var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+                return jwt;
             }
+            catch (Exception ex)
+            {
+                Log.Error("Application error", ex.Message);
+                return string.Empty;
+            }            
+        }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                _configuration.GetSection("AppSettings:Token").Value!));
+        public bool ValidateToken(string token)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(token))
+                {
+                    var handler = new JwtSecurityTokenHandler();
+                    var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+                    var expiry = jwtToken?.ValidTo;
 
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+                    if (expiry.HasValue && expiry.Value < DateTime.UtcNow)
+                    {
+                        return false;
+                    }
 
-            var token = new JwtSecurityToken(
-                    claims: claims,
-                    expires: DateTime.Now.AddHours(1),
-                    signingCredentials: creds
-                );
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return jwt;
+                    return true;
+                }
+                return false;
+            }
+            catch(Exception ex)
+            {
+                Log.Error("Application error", ex.Message);
+                return false;
+            }
         }
     }
 }

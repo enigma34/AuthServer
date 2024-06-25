@@ -10,5 +10,6 @@ namespace AuthServer.API.Services
         public bool CheckUserInDb(string emailId);
         public int GetUsersCount();
         public string CreateToken(User user);
+        public bool ValidateToken(string token);
     }
 }

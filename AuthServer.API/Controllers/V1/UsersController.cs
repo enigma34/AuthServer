@@ -15,9 +15,11 @@ namespace AuthServer.API.Controllers.V1
     public class UsersController : ControllerBase
     {
         private IUserServices _userServices;
-        public UsersController( IUserServices userServices)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public UsersController( IUserServices userServices, IHttpContextAccessor httpContextAccessor)
         {
             _userServices = userServices;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet(Name = "GetListOfUsers"),Authorize(Roles = "Admin")]
@@ -25,10 +27,12 @@ namespace AuthServer.API.Controllers.V1
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
+                //if (!ModelState.IsValid)
+                //{
+                //    return BadRequest(ModelState);
+                //}
+               // var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+                //var checkTokenExpiry = _userServices.ValidateToken(token);
                 return Ok(_userServices.GetAllUsers());
             }
             catch (Exception ex)

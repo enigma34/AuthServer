@@ -8,6 +8,7 @@ using Swashbuckle.AspNetCore.Filters;
 using Serilog;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using AuthServer.API.Middleware;
 
 namespace AuthServer.API
 {
@@ -101,8 +102,7 @@ namespace AuthServer.API
             });
 
             app.UseAuthorization();
-
-
+            app.UseMiddleware<TokenExpiryCheckMiddleware>();
             app.MapControllers();
 
             app.Run();
