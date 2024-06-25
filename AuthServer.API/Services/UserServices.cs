@@ -12,6 +12,8 @@ namespace AuthServer.API.Services
     {
         private List<User> testUsers;
         private readonly IConfiguration _configuration;
+        private List<string> _revokedTokens;
+
         public UserServices(IConfiguration configuration)
         {
             //palin password "test"
@@ -20,6 +22,9 @@ namespace AuthServer.API.Services
             testUsers.Add(new User() { Id = 2, Email = "123@xyz.com", PasswordHash = "$2a$11$BDW8s0ctkCo35NqKfdXmG.aSME0Tqne6wepyeVYctpkeft2KStluC", USerRole = new() { Roles.User.ToString() } });
             testUsers.Add(new User() { Id = 3, Email = "wsad@xyz.com", PasswordHash = "$2a$11$BDW8s0ctkCo35NqKfdXmG.aSME0Tqne6wepyeVYctpkeft2KStluC", USerRole = new() { Roles.User.ToString() } });
             _configuration = configuration;
+            _revokedTokens = new List<string>();
+            //_revokedTokens.Add("eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhYmNAeHl6LmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6WyJBZG1pbiIsIlVzZXIiXSwiZXhwIjoxNzE5MzI0NDYyfQ.reQaQXNU1GxS1j7eA_AXilJVGmvvv-vuzJkM6i0UaWs");
+            //_revokedTokens.Add("eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhYmNAeHl6LmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6WyJBZG1pbiIsIlVzZXIiXSwiZXhwIjoxNzE5MzMwNzA5fQ.uwnghM_4slQzeC-AkSszODlZqHc-j6Ca5vZse0GuA-0");
         }
 
         public List<User> GetAllUsers()
@@ -102,7 +107,7 @@ namespace AuthServer.API.Services
 
                 var token = new JwtSecurityToken(
                         claims: claims,
-                        expires: DateTime.Now.AddMinutes(1),
+                        expires: DateTime.Now.AddHours(1),
                         signingCredentials: creds
                     );
 
@@ -141,6 +146,16 @@ namespace AuthServer.API.Services
                 Log.Error("Application error", ex.Message);
                 return false;
             }
+        }
+
+        public void RevokeToken(string token)
+        {
+            _revokedTokens.Add(token);
+        }
+
+        public bool IsTokenRevoked(string token)
+        {
+            return _revokedTokens.Contains(token);
         }
     }
 }

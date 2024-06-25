@@ -102,6 +102,7 @@ namespace AuthServer.API
             });
 
             app.UseAuthorization();
+            app.UseMiddleware<TokenRevocationMiddleware>();
             app.UseMiddleware<TokenExpiryCheckMiddleware>();
             app.MapControllers();
 

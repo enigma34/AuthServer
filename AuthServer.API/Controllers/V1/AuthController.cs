@@ -2,6 +2,7 @@
 using AuthServer.API.DTOs;
 using AuthServer.API.Models;
 using AuthServer.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -52,19 +53,43 @@ namespace AuthServer.API.Controllers.V1
         [HttpPost("login")]
         public ActionResult<User> Login(LoginRequest request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            User? user =_userServices.GetUser(request.Email);
-
-            if (user is null)
-                return BadRequest("User not found");
-
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            try
             {
-                return BadRequest("Wrong password");
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+                User? user = _userServices.GetUser(request.Email);
+
+                if (user is null)
+                    return BadRequest("User not found");
+
+                if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+                {
+                    return BadRequest("Wrong password");
+                }
+                string token = _userServices.CreateToken(user);
+                return Ok(token);
             }
-            string token = _userServices.CreateToken(user);
-            return Ok(token);
+            catch (Exception ex)
+            {
+                Log.Error("Application error", ex.Message);
+                return BadRequest("Internal Server Error");
+            }
+            
+        }
+
+        [HttpPost("RevokeToken"), Authorize(Roles ="Admin")]
+        public ActionResult RevokeToken(string token)
+        {
+            try
+            {
+                _userServices.RevokeToken(token);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Application error", ex.Message);
+                return BadRequest("Internal Server Error");
+            }
         }
     }
 }
