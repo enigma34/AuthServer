@@ -27,15 +27,14 @@ namespace AuthServer.API.Controllers.V1
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var allUsers = _userServices.GetAllUsers();
-                User? checkuserexists = allUsers.Find(e => e.Email == request.Email);
+                bool checkuserexists = _userServices.CheckUserInDb(request.Email);
 
-                if (checkuserexists is not null)
+                if (checkuserexists)
                     return BadRequest("Email id already used");
 
                 string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
                 User user = new User();
-                user.Id = allUsers.Count() + 1;
+                user.Id = _userServices.GetUsersCount() + 1;
                 user.Email = request.Email;
                 user.PasswordHash = passwordHash;
                 user.USerRole = request.USerRole;
@@ -48,6 +47,24 @@ namespace AuthServer.API.Controllers.V1
                 return BadRequest("Internal Server Error");
             }
             
+        }
+
+        [HttpPost("login")]
+        public ActionResult<User> Login(LoginRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            User? user =_userServices.GetUser(request.Email);
+
+            if (user is null)
+                return BadRequest("User not found");
+
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            {
+                return BadRequest("Wrong password");
+            }
+            string token = _userServices.CreateToken(user);
+            return Ok(token);
         }
     }
 }
