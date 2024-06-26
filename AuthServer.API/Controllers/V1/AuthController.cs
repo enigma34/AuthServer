@@ -51,7 +51,7 @@ namespace AuthServer.API.Controllers.V1
         }
 
         [HttpPost("login")]
-        public ActionResult<User> Login(LoginRequest request)
+        public ActionResult<LoginResponse> Login(LoginRequest request)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace AuthServer.API.Controllers.V1
                 {
                     return BadRequest("Wrong password");
                 }
-                string token = _userServices.CreateToken(user);
+                LoginResponse token = _userServices.CreateToken(user);
                 return Ok(token);
             }
             catch (Exception ex)
@@ -84,6 +84,35 @@ namespace AuthServer.API.Controllers.V1
             {
                 _userServices.RevokeToken(token);
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Application error", ex.Message);
+                return BadRequest("Internal Server Error");
+            }
+        }
+
+        [HttpPost("RefreshToken"), Authorize(Roles = "Admin")]
+        public ActionResult<RefreshTokenResponse> RefreshToken(RefreshTokenRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+                
+                User? user = _userServices.GetUser(request.UserEmail);
+
+                if (user == null)
+                    return BadRequest("User not found");
+
+                RefreshToken? userRefreshTpken = _userServices.GetRefreshToken(user.Email);
+
+                if (userRefreshTpken.RefreshTokenExpiryTime <= DateTime.UtcNow || request.RefreshToken != userRefreshTpken.AppRefreshToken)
+                    return BadRequest("Invalid token");
+
+                var token = _userServices.CreateToken(user);
+
+                return Ok(new RefreshTokenResponse { NewAccessToken=token.AccessToken, NewRefreshToken = token.RefreshToken});
             }
             catch (Exception ex)
             {
