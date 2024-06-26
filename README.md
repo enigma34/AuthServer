@@ -24,7 +24,9 @@ This project develops a RESTful Authentication and Authorization service, design
 1. Download the AuthServer V1.0 from Release 
 2. Launch the AuthServer.API.exe
 3. Open URL: "http://localhost:5000/swagger/index.html" or Use Postman with base URL: "http://localhost:5000"
-   ![List of APIs in Swagger ready to tes](Images/ss.png "Ready to run")   
+   
+   ![List of APIs in Swagger ready to tes](Images/SS.png "Ready to run")
+   
 5. Use the following details to test the APIs: 
 
     | Email  | Password |  Role |
