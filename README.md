@@ -24,7 +24,7 @@ This project develops a RESTful Authentication and Authorization service, design
 * .NET 8 Runtime <https://dotnet.microsoft.com/en-us/download/dotnet/8.0>
 
 ## How to use
-1. Download the AuthServer V1.0 from Release 
+1. Download the AuthServer V1.0 from Release <https://github.com/enigma34/AuthServer/releases/download/V1.0/AuthServer.zip>
 2. Launch the AuthServer.API.exe
 3. Open URL: "http://localhost:5000/swagger/index.html" or Use Postman with base URL: "http://localhost:5000"
    
