@@ -43,11 +43,11 @@ This project develops a RESTful Authentication and Authorization service, design
     | Method | URL                                       | Request Body                                      |
     |--------|-------------------------------------------|---------------------------------------------------|
     | POST   | http://localhost:5000/api/v1/Auth/register| `{ "email": "string", "password": "string", "uSerRole": [""] }` |
-    | POST   | https://localhost:5000/api/v1/Auth/login  | `{ "email": "string", "password": "string" }`     |
-    | POST   | https://localhost:5000/api/v1/Auth/RevokeToken | `{ "token": "string" }`                           |
-    | POST   | https://localhost:5000/api/v1/Auth/RefreshToken | `{ "userEmail": "string", "refreshToken": "string" }` |
-    | GET    | https://localhost:5000/api/v1/Users       | `{}`                                              |
-    | GET    | https://localhost:5000/api/v1/WeatherForecast | `{}`                                              |
+    | POST   | http://localhost:5000/api/v1/Auth/login  | `{ "email": "string", "password": "string" }`     |
+    | POST   | http://localhost:5000/api/v1/Auth/RevokeToken | `{ "token": "string" }`                           |
+    | POST   | http://localhost:5000/api/v1/Auth/RefreshToken | `{ "userEmail": "string", "refreshToken": "string" }` |
+    | GET    | http://localhost:5000/api/v1/Users       | `{}`                                              |
+    | GET    | http://localhost:5000/api/v1/WeatherForecast | `{}`                                              |
 
     **Table 2:** API Endpoints
 
