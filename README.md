@@ -20,6 +20,9 @@ This project develops a RESTful Authentication and Authorization service, design
 * ASP.NET Core
 * Serilog
 
+## Requirement
+* .NET 8 Runtime <https://dotnet.microsoft.com/en-us/download/dotnet/8.0>
+
 ## How to use
 1. Download the AuthServer V1.0 from Release 
 2. Launch the AuthServer.API.exe
